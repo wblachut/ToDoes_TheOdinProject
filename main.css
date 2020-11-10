@@ -1,7 +1,8 @@
 :root {
-  --accentMain: rgb(218, 148, 17);
+  --accentMain: rgb(155, 170, 179);
   --accentDim: rgb(219, 217, 196);
   --accentDark: rgb(99, 80, 28);
+  --navbarHeight: 
 }
 
 html,body {
@@ -14,7 +15,6 @@ html,body {
  }
 
  html {
-   font-family:  Open-Sans, 'Work Sans', serif;
    color: rgb(0, 0, 0);
  }
 
@@ -27,10 +27,10 @@ html,body {
 nav {
   background-color: rgb(155, 170, 179);
   position: fixed;
-  padding: 10px;
+  /* padding: 10px;  */
   margin: 0%;
   width: 100%;
-  height: 8vh;
+  height: 11vh;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -50,35 +50,252 @@ nav {
   padding-left: 100px;
 }
 
-#add-task-div  {
-  padding-right: 60px;
+#top-buttons {
+  padding-right: 30px;
 }
 
-#add-task-div button {
+#top-buttons button {
   height: 40px;
   width: 40px;
-  border-radius: 50px;
+  border-radius: 20px;
   background-color: black;
   color: white;
   border: none;
-  font-size: 2.1rem;
+  font-size: 2rem;
   text-align: center;
   align-items: flex-start;
+  margin: 0px 10px;
 }
 
-#add-task-div button:hover {
-  color: rgb(0, 0, 0);
-  background-color: rgb(255, 255, 255);
-  /* transform: scale(1.1); */
-  font-size: 2.1rem;
-  box-shadow: 0px 0px 10px black;  
+#top-buttons button:hover, button#new-project-button:hover {
+  background-color: rgb(71, 71, 71);
+  color: white;
 }
-
-#add-task-div button:active {
-transform: scale(.9);}
 
 #container {
   width: 100%
 }
 
+#projects-nav {
+  font-family: 'Open Sans';
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  height: 89vh;
+  width: 20vw;
+  background-color: rgb(34, 34, 34);
+  /* display: none; */
+}
 
+#projects-nav.active {
+  display: flex;
+  flex-direction: column;
+}
+
+button#add-project-button {
+  border: 0px solid rgb(0, 0, 0) !important;
+  background-color: rgb(46, 46, 46) !important;
+  box-shadow:inset 0px 0px 1px 2px rgb(209, 209, 209);
+  box-shadow:inset 0px 0px 1px 2px rgb(53, 53, 53);
+
+}
+
+button#new-project-button, .project {
+  padding: 15px 0px;
+  font-family: 'Quicksand';
+  border: none;
+  border-bottom: 2px solid;
+  background-color: rgb(51, 51, 51);
+  background-color: rgb(0, 0, 0);
+  color: rgb(201, 201, 201);
+  text-decoration: underline;
+}
+
+
+button#menage-projects-button.active {
+  font-family: 'Quicksand';
+  width: fit-content !important;
+  padding: 0px 50px;
+  font-size: 1.5rem;
+  
+}
+
+#new-project-ul :nth-child(n), .project {
+  width: 100%;
+  border: none;
+  border-bottom: 0px solid rgb(128, 128, 128);
+  background-color: rgb(0, 0, 0);
+}
+
+#new-project-ul {
+  display:  none;
+}
+
+#new-project-ul.active {
+  display: block !important;
+}
+
+#project-name-input::placeholder {
+  color: rgb(66, 66, 66);  
+  font-style: italic;
+  padding-right: 20px;
+}
+
+#project-name-input {
+  font-family: 'Quicksand';
+  color: rgb(0, 0, 0);
+  text-align: center;
+  padding: 10px 0px !important;
+  background-color: rgb(0, 0, 0) !important;
+  background-color:rgb(155, 170, 179) !important;
+  background-color:rgb(231, 231, 231) !important;
+  box-shadow:inset 0px 0px 1px 2px rgb(34, 34, 34);
+  font-weight: bold;
+}
+
+#new-project-ul button {
+  font-family: 'Quicksand';
+  color: rgb(201, 201, 201);
+  text-decoration: underline;
+  background-color: rgb(51, 51, 51);
+  padding: 10px 0px !important;
+}
+
+#new-project-ul button:hover, .project:hover {
+  background-color: rgb(71, 71, 71) !important;
+  color: white;
+}
+
+.project {
+  border: 1px solid rgb(44, 44, 44);
+  color: rgb(136, 136, 136);
+  text-decoration: none;
+  text-align: start;
+  padding-left: 5px;
+}
+
+button#add-task-button.active {
+  transform: rotate(405deg);
+  transition-timing-function: cubic-bezier(2, 0.82, 0.165, 1);
+}
+
+button#add-task-button:active {
+  transform: rotate(405deg);
+  transition-timing-function: cubic-bezier(2, 0.82, 0.165, 1);
+}
+
+
+#add-task-modal {
+  display: none;
+  position: fixed; 
+  z-index: 1;
+  padding-top: 10vh;
+  left: 0;
+  top: 11vh;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0,0.8);
+}
+
+#add-task-window {
+  position: fixed; 
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  padding: 0px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);
+  padding: 2%;
+  border-radius: 20px;
+} 
+
+#add-task-modal.active {
+  display: flex;  
+  position: fixed;
+} 
+
+#add-task-window button {
+  align-self: right;
+  background-color: black;
+  color: white;
+}
+
+#add-task-window button:nth-child(1) {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  align-self: right;
+  border-radius: 20px;
+  border: none;
+  font-size: .7rem;
+}
+
+.checklist-bullet {
+  padding-left: 15px;
+}
+
+.checklist-input {
+  border: none;
+  width: 300px !important;
+}
+
+div#add-task-window input, select, textarea {
+  margin: 5px;
+  width: 96%;
+  }
+
+div#add-task-window button {
+  height: 20px;
+  width: 20px;
+  margin-left: 200px;
+  border-radius: 30px;
+  border: none;
+}
+
+button#remove-bullet {
+  margin-left: 20px !important;
+}
+
+input#task-name-input::placeholder {
+  color: rgb(128, 128, 128);
+  font-style: italic;
+
+}
+
+input#task-name-input {
+  border-bottom: 2px solid rgb(153, 153, 153);
+  color: rgb(0, 0, 0);
+  font-size: 1.2rem;
+  width: 340px !important;
+}
+
+input[type="text"] {
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-bottom: 2px solid rgb(221, 221, 221);
+}
+
+textarea::placeholder {
+  font-style: italic;
+}
+
+#date-input, #priority, #projects {
+  width: 150px !important;
+  margin-left: 20px;
+}
+
+input[type="submit"] {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 10px 0px;
+  margin-top: 20px !important;
+}
+
+#date-input {
+  margin-left: 20px !important;
+}
