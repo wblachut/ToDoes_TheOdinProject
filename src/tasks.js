@@ -1,6 +1,6 @@
 let tasksToDo = [];
 
-const taskCreator = (name, description, priority, dueDate, checklist) => {
+const taskCreator = (name, description, priority, dueDate, checklist, notes = '') => {
   const setName = (newName) => {
     return this.name = newName;
   }
@@ -10,7 +10,7 @@ const taskCreator = (name, description, priority, dueDate, checklist) => {
     // tasksToDo.push(this);
   } 
 
-  return { name, description, priority, dueDate, checklist, addToTaskList, setName }
+  return { name, description, priority, dueDate, checklist, notes, addToTaskList, setName }
 }
 
 

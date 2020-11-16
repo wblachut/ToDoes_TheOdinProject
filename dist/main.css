@@ -1,8 +1,7 @@
 :root {
   --accentMain: rgb(155, 170, 179);
-  --accentDim: rgb(219, 217, 196);
-  --accentDark: rgb(99, 80, 28);
-  --navbarHeight: 
+  --accentNavy: rgb(26, 70, 90);
+  --accentGrey: rgb(172, 172, 172);
 }
 
 html,body {
@@ -67,7 +66,7 @@ nav {
   margin: 0px 10px;
 }
 
-#top-buttons button:hover, button#new-project-button:hover {
+#top-buttons button:hover {
   background-color: rgb(71, 71, 71);
   color: white;
 }
@@ -84,7 +83,7 @@ nav {
   height: 89vh;
   width: 20vw;
   background-color: rgb(34, 34, 34);
-  /* display: none; */
+  display: none;
 }
 
 #projects-nav.active {
@@ -94,10 +93,8 @@ nav {
 
 button#add-project-button {
   border: 0px solid rgb(0, 0, 0) !important;
-  background-color: rgb(46, 46, 46) !important;
-  box-shadow:inset 0px 0px 1px 2px rgb(209, 209, 209);
+  background-color: rgb(36, 36, 36) !important;
   box-shadow:inset 0px 0px 1px 2px rgb(53, 53, 53);
-
 }
 
 button#new-project-button, .project {
@@ -117,7 +114,6 @@ button#menage-projects-button.active {
   width: fit-content !important;
   padding: 0px 50px;
   font-size: 1.5rem;
-  
 }
 
 #new-project-ul :nth-child(n), .project {
@@ -132,13 +128,14 @@ button#menage-projects-button.active {
 }
 
 #new-project-ul.active {
-  display: block !important;
+  display: block;
 }
 
 #project-name-input::placeholder {
-  color: rgb(66, 66, 66);  
+  color: rgb(117, 117, 117);  
   font-style: italic;
   padding-right: 20px;
+  font-weight: 100;
 }
 
 #project-name-input {
@@ -146,8 +143,6 @@ button#menage-projects-button.active {
   color: rgb(0, 0, 0);
   text-align: center;
   padding: 10px 0px !important;
-  background-color: rgb(0, 0, 0) !important;
-  background-color:rgb(155, 170, 179) !important;
   background-color:rgb(231, 231, 231) !important;
   box-shadow:inset 0px 0px 1px 2px rgb(34, 34, 34);
   font-weight: bold;
@@ -157,11 +152,22 @@ button#menage-projects-button.active {
   font-family: 'Quicksand';
   color: rgb(201, 201, 201);
   text-decoration: underline;
-  background-color: rgb(51, 51, 51);
+  background-color: rgb(82, 82, 82);
   padding: 10px 0px !important;
 }
 
-#new-project-ul button:hover, .project:hover {
+#new-project-ul button:hover, button#new-project-button:hover  {
+  color: var(--accentMain);
+  border-bottom-color: var(--accentMain);
+}
+
+#new-project-ul button:hover {
+  box-shadow:inset 0px 0px 1px 2px var(--accentMain);
+  box-shadow: inset ;
+}
+
+
+.project:hover {
   background-color: rgb(71, 71, 71) !important;
   color: white;
 }
@@ -172,6 +178,11 @@ button#menage-projects-button.active {
   text-decoration: none;
   text-align: start;
   padding-left: 5px;
+}
+
+.project.active-project {
+  color: var(--accentMain);
+  text-decoration: underline;
 }
 
 button#add-task-button.active {
@@ -195,7 +206,6 @@ button#add-task-button:active {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgb(0,0,0);
   background-color: rgba(0,0,0,0.8);
 }
 
@@ -283,7 +293,7 @@ textarea::placeholder {
   font-style: italic;
 }
 
-#date-input, #priority, #projects {
+#date-input, #priority-select, #projects-select {
   width: 150px !important;
   margin-left: 20px;
 }
@@ -298,4 +308,113 @@ input[type="submit"] {
 
 #date-input {
   margin-left: 20px !important;
+}
+
+#container {
+  padding-top: 11vh;
+  width: 100vw;
+  height: 89vh;
+  background-color: rgb(230, 230, 230);
+  display: flex;
+}
+
+.Task {
+  padding: 10px;
+  margin: 20px;
+  border: 5px solid rgb(131, 143, 148);
+  border: 3px solid var(--accentMain);
+  /* width: fit-content; */
+  width: 200px !important;
+  height: fit-content;
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px 2px rgb(105, 105, 105);
+  box-shadow: 0px 0px 5px 2px var(--accentMain);
+  background-color: rgb(236, 236, 236);
+}
+
+.Task li {
+  padding: 10px;
+  height: fit-content;
+  color: rgb(112, 112, 112);
+  /* box-shadow: 0px 0px 5px 2px; */
+}
+
+.Task .task-title {
+  font-size: 1.6rem;
+  font-family: 'Quicksand';
+  color: rgb(127, 150, 156);
+  text-align: center;
+}
+
+.low-priority, .medium-priority, .high-priority {
+  font-size: .9rem;
+  text-align: center;
+  font-family: 'Quicksand';
+  margin: 5px 0px;
+  color: rgb(131, 143, 148);
+  border-top: 1px solid rgb(131, 143, 148);
+}
+
+.medium-priority {
+  color: rgb(1, 163, 168);
+  border-top: 1px solid rgb(1, 163, 168);
+}
+
+.high-priority {
+
+  color: rgb(255, 11, 2);
+  border-top: 1px solid rgb(255, 11, 2);
+}
+
+.Task .task-description {
+  margin-top: -15px;
+  font-family: 'Open space';
+  color: rgb(26, 70, 90);
+}
+
+.task-checklist-ul li {
+  color: rgb(53, 53, 53);
+}
+
+.checklist-li.crossed {
+  color: rgb(172, 172, 172);
+  text-decoration: line-through;
+} 
+
+.checklist-li.crossed label {
+  color: rgb(172, 172, 172);
+}
+
+.task-checklist-ul li:hover {
+  transform: scale(1.01);
+}
+
+.task-checklist-ul label {
+  padding-right: 10px;
+  color: var(--accentNavy);
+  text-decoration: none !important;
+}
+
+.Task button {
+  background-color: rgb(219, 224, 226);
+  color: var(--accentGray);
+  border: solid 1px var(--accentMain);
+  text-align: center;
+  font-family: 'Work Sans';
+  font-size: 0.9rem;
+  border-radius: 5px;
+}
+
+.Task button:hover {
+  background-color: var(--accentMain);
+  border-color: black;
+  color: black;
+}
+
+.Task img {
+  transform: scale(0.6);
+}
+
+.Task button.save-changes-button {
+  display: none;
 }
