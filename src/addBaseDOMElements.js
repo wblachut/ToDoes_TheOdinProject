@@ -22,7 +22,6 @@ function addBaseElements() {
   addTask.id = 'add-task-button';
   addTask.textContent = `+`;
   topButtonsDiv.appendChild(addTask);
-  debugger;
 
   const menageProjectsButton = document.createElement('button');
   menageProjectsButton.id = 'menage-projects-button';

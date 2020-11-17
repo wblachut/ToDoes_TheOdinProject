@@ -123,20 +123,21 @@ function populateTasks() {
       // console.log(task.checklist);
       task.checklist.forEach((element, index) => {
       //  console.log(index, element);
-          taskChecklist += `<li id="bullet${index}" class="checklist-li"><label class="task-checklist-bullet" for="bullet${index}">✦</label>${element}</li>`
+          taskChecklist += `<li id="bullet${index}" class="checklist-li for-edit"><label class="task-checklist-bullet" for="bullet${index}">✦</label>${element}</li>`
           return taskChecklist
-        });
+      });
+
       let taskNoteContent = '';
       if (task.notes != '') {
         taskNoteContent =  `<br>
       <li><div class ="task-description"> Notes: </div></li>
-      <li><div class ="task-notes">${task.notes}</div></li>`;
+      <li><div class ="task-notes" for-edit>${task.notes}</div></li>`;
       }
 
       taskElement.innerHTML =
-       `<ul><li><div class="task-title">${task.name}</div>
+       `<ul><li><div class="task-title for-edit">${task.name}</div>
         <div class ="${task.priority}-priority">${task.priority} priority</div></li>
-        <li><div class ="task-description">${task.description}</div></li>
+        <li><div class ="task-description for-edit">${task.description}</div></li>
         <li><div class ="task-dueDate">due to: ${task.dueDate}</div></li>
         <ul class="task-checklist-ul">${taskChecklist} </ul>
         ${taskNoteContent}
@@ -147,40 +148,65 @@ function populateTasks() {
             <button class ="archive-task-button">
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMS44IDlsLS44LTRoMjJsLS44IDRoLTIuMDI5bC4zOS0yaC0xNy4xMjJsLjQxNCAyaC0yLjA1M3ptMTguNTc1LTZsLjYwNC0yaC0xNy45NzlsLjY4OCAyaDE2LjY4N3ptMy42MjUgOGwtMiAxM2gtMjBsLTItMTNoMjR6bS04IDRjMC0uNTUyLS40NDctMS0xLTFoLTZjLS41NTMgMC0xIC40NDgtMSAxcy40NDcgMSAxIDFoNmMuNTUzIDAgMS0uNDQ4IDEtMXoiLz48L3N2Zz4="> Archive </button></li>
         `;
-      
+        
         container.appendChild(taskElement)
-        handleBulletCrossing();
         makeTaskEditable();
         makeTaskArchivable();
+        // handleSavingTask();
+        handleBulletCrossing('on');
 
         function makeTaskArchivable() {
-          const archiveTaskButton = document.querySelector('.archive-task-button')
-          archiveTaskButton.addEventListener('click', () => {
-            taskList.slice(task.index, 1);
+          let archiveTaskButton = document.querySelectorAll('.archive-task-button')[index];
+          archiveTaskButton.addEventListener('click', (e) => {
+            currentProject.taskList.splice(index, 1);
             populateTasks();
           });
         }
 
+        let editTaskButton
+        let saveTaskChangesButton
+
         function makeTaskEditable() {
-          const archiveTaskButton = document.querySelector('.edit-task-button')
-          const saveTaskChangesButton = document.querySelector('.save-changes-button')
-          archiveTaskButton.addEventListener('click', function() {
-            console.log(`edit ${task}`)
-            // populateTasks();
-            // archiveTaskButton.setAttribute[display] = 'none'
-            // saveTaskChangesButton.setAttribute[display] = 'flex'
+          let editTaskButton = document.querySelectorAll('.edit-task-button')[index];
+          let saveTaskChangesButton = document.querySelectorAll('.save-changes-button')[index];
+          let editableElements = taskElement.querySelectorAll('.for-edit');
+
+          editTaskButton.addEventListener('click', (e) => {
+            editTaskButton.style.display = 'none';
+            saveTaskChangesButton.style.display = 'flex';
+            editableElements.forEach(element => element.contentEditable = true)
+            handleBulletCrossing('off');
           });
         }
         
-        function handleBulletCrossing() {
-          const taskChecklistUl = document.querySelectorAll('.checklist-li')
+        function handleSavingTask() {
+          saveTaskChangesButton.addEventListener('click', (e) => {
+            saveTaskChangesButton.style.display = 'none';
+            editTaskButton.style.display = 'flex';
+            editableElements.forEach(element => {
+              prop = element.id.slice(4)
+              currentProject.taskList[index].prop = element.textContent || element.value
+            })
+            handleBulletCrossing('on');
+            editableElements.forEach(element => element.contentEditable = false);
+          });
+        }
+
+        function handleBulletCrossing(condition) {
+          const taskChecklistUl = taskElement.querySelectorAll('.checklist-li')
           taskChecklistUl.forEach(bullet => {
-            bullet.addEventListener('click', toggleClassCrossed);    
             function toggleClassCrossed() {
-              bullet.classList.toggle('crossed')
+               bullet.classList.toggle('crossed');
+            }
+            if (condition == 'on') {
+             bullet.addEventListener('click', toggleClassCrossed);    
+            } else if (condition == 'off') {
+              bullet.classList.remove('crossed');
+              bullet.removeEventListener('click', toggleClassCrossed) 
             }
           });
         }
+
     }
   });
   }

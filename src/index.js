@@ -4,7 +4,9 @@ import { projectCreator } from './projects';
 
 document.body.onload = addBaseElements;
 
-
+if (module.hot) {
+  module.hot.accept()
+}
 
 
 
