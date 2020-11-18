@@ -1,6 +1,4 @@
 import addBaseElements from './addBaseDOMElements';
-import { taskCreator } from './tasks';
-import { projectCreator } from './projects';
 
 document.body.onload = addBaseElements;
 

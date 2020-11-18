@@ -85,14 +85,13 @@ function populateProjectsNav() {
       }
     }
 
-    
-    
     projectElement.addEventListener('click', makeCurrentProject);
-
     function makeCurrentProject() {
       console.log('current project:', index, project);
       return currentProject = project;
     }
+    // store locally
+    
     return currentProject  
   });
 

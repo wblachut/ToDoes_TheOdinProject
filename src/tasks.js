@@ -1,20 +1,10 @@
-let tasksToDo = [];
-
 const taskCreator = (name, description, priority, dueDate, checklist, notes = '') => {
   const setName = (newName) => {
     return this.name = newName;
   }
 
-  const addToTaskList = () => {
-    console.log('addToTaskList')
-    // tasksToDo.push(this);
-  } 
-
-  return { name, description, priority, dueDate, checklist, notes, addToTaskList, setName }
+  return { name, description, priority, dueDate, checklist, notes, setName }
 }
 
-
-
-
 ////////////////
-export { taskCreator, tasksToDo };
+export { taskCreator };
