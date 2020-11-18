@@ -13,14 +13,11 @@ const handleDOMEvents = () => {
   const menageProjectsButton = document.getElementById('menage-projects-button')
   const projectsNav = document.getElementById('projects-nav');
   const newProjectButton = document.getElementById('new-project-button');
-  
   const newProjectUl = document.createElement('ul');
   newProjectUl.innerHTML = `<li> <input type="text" id="project-name-input" placeholder="New project name" autofocus></li>
   <li> <button id="add-project-button">add new Project</button> </li>`
   newProjectUl.id = 'new-project-ul';
   projectsNav.insertBefore(newProjectUl, projectsNav.children[0].nextElementSibling);
-  
-  
   menageProjectsButton.addEventListener('click', toggleProjects);
   newProjectButton.addEventListener('click', showAddProjectOption);
   
@@ -46,31 +43,31 @@ const handleDOMEvents = () => {
   
   const projectDefault = projectCreator('Default Project');
   const theProject = projectCreator('The Project');
-  const task1 = taskCreator('Cleaning', 'do the cleaning of my room', 'medium', '11.11.2020', ['make the bed', 'vaccum' , 'clean windows', 'clean surfaces', 'empty the trash'], 'just some cleaning nannanananan, tadada, nanananannaanna, taadadadat')
-  const task2 = taskCreator('Programming', 'learn JS React and Angular', 'high', '01.12.2020',[ 'Finish ToDos' ,'make MB website', 'finish React'])
-  const task3 = taskCreator('Christmas', 'Prepare for Christmas', 'low', '20.12.2020', ['order presents','do the shopping', 'clean house','pack gifts', 'prepare meals'])
+  const task1 = taskCreator('Cleaning', 'do the cleaning of my room', 'relevant', '2020-11-11', ['make the bed', 'vaccum' , 'clean windows', 'clean surfaces', 'empty the trash'], 'just some cleaning nannanananan, tadada, nanananannaanna, taadadadat')
+  const task2 = taskCreator('Programming', 'learn JS React and Angular', 'important', '2020-12-01',[ 'Finish ToDos' ,'make MB website', 'finish React'])
+  const task3 = taskCreator('Christmas', 'Prepare for Christmas', 'minor', '2020-12-20', ['order presents','do the shopping', 'clean house','pack gifts', 'prepare meals'])
   projectDefault.addTask(task1);
   projectDefault.addTask(task2);
   projectDefault.addTask(task3);
+  theProject.addTask(task3);
   projectList.push(projectDefault);
   projectList.push(theProject);
   let currentProject = projectList[0];
 
 //////////////////////////////////////////////////////////////////
 
-
 function addNewProject(e) {
   e.preventDefault();
   let projectName;
   handleProjectName();
   function handleProjectName() {
-    (projectNameInput.value == "") ? projectName = 'My Project' : projectName = projectNameInput.value;
+    (projectNameInput.value == "") ? projectName = 'New Project' : projectName = projectNameInput.value;
   }  
   const newProject = projectCreator(projectName);
   projectList.push(newProject);
   console.log(projectList);
   newProjectUl.classList.remove('active')
-  // clear input field
+  projectNameInput.value = ""
   populateProjectsNav();
 }
 
@@ -83,9 +80,15 @@ function populateProjectsNav() {
       projectElement.classList.add('project');
       projectElement.innerText = project.name;
       projectsNav.appendChild(projectElement)
+      if (index == 0){
+        projectElement.classList.add('active-project')
+      }
     }
+
     
-    projectElement.addEventListener('click', makeCurrentProject)
+    
+    projectElement.addEventListener('click', makeCurrentProject);
+
     function makeCurrentProject() {
       console.log('current project:', index, project);
       return currentProject = project;
@@ -103,94 +106,160 @@ function populateProjectsNav() {
       projectNodeList.forEach(project => project.classList.remove('active-project'));
       populateTasks();
       project.classList.add('active-project')})
-
-      // clear div
-      // populate div with tasks
     });
   }
 }
 
 function populateTasks() {
-  // console.log('Populate Tasks in ', currentProject);
   removeParentContent(container);
   currentProject.taskList.forEach((task, index) => {
-    // console.log(index, task.name);
     const taskElement = document.createElement('div');
     if (!document.getElementById(`Task${index}`)) {
       taskElement.id = `Task${index}`;
       taskElement.classList.add('Task');
-      let taskChecklist = '';
-      // console.log(task.checklist);
+      let taskChecklistContent = '';
+      let taskNoteContent = '';
       task.checklist.forEach((element, index) => {
       //  console.log(index, element);
-          taskChecklist += `<li id="bullet${index}" class="checklist-li for-edit"><label class="task-checklist-bullet" for="bullet${index}">✦</label>${element}</li>`
-          return taskChecklist
+          taskChecklistContent += `<li><label class="task-checklist-bullet" for="bullet${index}">✦</label><span class="task-checklist-el for-edit">${element}</span></li>`
+          return taskChecklistContent
       });
 
-      let taskNoteContent = '';
       if (task.notes != '') {
         taskNoteContent =  `<br>
-      <li><div class ="task-description"> Notes: </div></li>
-      <li><div class ="task-notes" for-edit>${task.notes}</div></li>`;
+        <li><div class ="notes"> Notes: </div></li>
+        <li><div class ="task-notes for-edit" >${task.notes}</div></li>`;
       }
 
       taskElement.innerHTML =
-       `<ul><li><div class="task-title for-edit">${task.name}</div>
-        <div class ="${task.priority}-priority">${task.priority} priority</div></li>
+       `<div class="editing-label">editing</div><ul><li><div class="task-name for-edit">${task.name}</div>
+        <div class ="task-priority ${task.priority} for-edit">${task.priority} </div></li>
         <li><div class ="task-description for-edit">${task.description}</div></li>
-        <li><div class ="task-dueDate">due to: ${task.dueDate}</div></li>
-        <ul class="task-checklist-ul">${taskChecklist} </ul>
-        ${taskNoteContent}
-            <li><button class ="edit-task-button">
-        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMS40MzggMTYuODcybC0xLjQzOCA3LjEyOCA3LjEyNy0xLjQzOCAxMi42NDItMTIuNjQtNS42OS01LjY5LTEyLjY0MSAxMi42NHptMi4yNzEgMi4yNTNsLS44NS0uODQ5IDExLjE0MS0xMS4xMjUuODQ5Ljg0OS0xMS4xNCAxMS4xMjV6bTIwLjI5MS0xMy40MzZsLTIuODE3IDIuODE5LTUuNjktNS42OTEgMi44MTYtMi44MTcgNS42OTEgNS42ODl6Ii8+PC9zdmc+"> Edit </button>
-            <button class ="save-changes-button">
-        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMjIgMnYyMmgtMjB2LTIyaDNjMS4yMyAwIDIuMTgxLTEuMDg0IDMtMmg4Yy44Mi45MTYgMS43NzEgMiAzIDJoM3ptLTExIDFjMCAuNTUyLjQ0OCAxIDEgMSAuNTUzIDAgMS0uNDQ4IDEtMXMtLjQ0Ny0xLTEtMWMtLjU1MiAwLTEgLjQ0OC0xIDF6bTkgMWgtNGwtMiAyaC0zLjg5N2wtMi4xMDMtMmgtNHYxOGgxNnYtMTh6bS0xMyA5LjcyOWwuODU1LS43OTFjMSAuNDg0IDEuNjM1Ljg1MiAyLjc2IDEuNjU0IDIuMTEzLTIuMzk5IDMuNTExLTMuNjE2IDYuMTA2LTUuMjMxbC4yNzkuNjRjLTIuMTQxIDEuODY5LTMuNzA5IDMuOTQ5LTUuOTY3IDcuOTk5LTEuMzkzLTEuNjQtMi4zMjItMi42ODYtNC4wMzMtNC4yNzF6Ii8+PC9zdmc+"> Save </button>
-            <button class ="archive-task-button">
-        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMS44IDlsLS44LTRoMjJsLS44IDRoLTIuMDI5bC4zOS0yaC0xNy4xMjJsLjQxNCAyaC0yLjA1M3ptMTguNTc1LTZsLjYwNC0yaC0xNy45NzlsLjY4OCAyaDE2LjY4N3ptMy42MjUgOGwtMiAxM2gtMjBsLTItMTNoMjR6bS04IDRjMC0uNTUyLS40NDctMS0xLTFoLTZjLS41NTMgMC0xIC40NDgtMSAxcy40NDcgMSAxIDFoNmMuNTUzIDAgMS0uNDQ4IDEtMXoiLz48L3N2Zz4="> Archive </button></li>
+        <li>due to: <div class ="task-dueDate for-edit">${task.dueDate}</div></li>
+        <ul class="task-checklist">${taskChecklistContent} </ul> ${taskNoteContent}
+        <li><button class ="edit-task-button">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMS40MzggMTYuODcybC0xLjQzOCA3LjEyOCA3LjEyNy0xLjQzOCAxMi42NDItMTIuNjQtNS42OS01LjY5LTEyLjY0MSAxMi42NHptMi4yNzEgMi4yNTNsLS44NS0uODQ5IDExLjE0MS0xMS4xMjUuODQ5Ljg0OS0xMS4xNCAxMS4xMjV6bTIwLjI5MS0xMy40MzZsLTIuODE3IDIuODE5LTUuNjktNS42OTEgMi44MTYtMi44MTcgNS42OTEgNS42ODl6Ii8+PC9zdmc+"> Edit </button>
+        <button class ="save-changes-button">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMjIgMnYyMmgtMjB2LTIyaDNjMS4yMyAwIDIuMTgxLTEuMDg0IDMtMmg4Yy44Mi45MTYgMS43NzEgMiAzIDJoM3ptLTExIDFjMCAuNTUyLjQ0OCAxIDEgMSAuNTUzIDAgMS0uNDQ4IDEtMXMtLjQ0Ny0xLTEtMWMtLjU1MiAwLTEgLjQ0OC0xIDF6bTkgMWgtNGwtMiAyaC0zLjg5N2wtMi4xMDMtMmgtNHYxOGgxNnYtMTh6bS0xMyA5LjcyOWwuODU1LS43OTFjMSAuNDg0IDEuNjM1Ljg1MiAyLjc2IDEuNjU0IDIuMTEzLTIuMzk5IDMuNTExLTMuNjE2IDYuMTA2LTUuMjMxbC4yNzkuNjRjLTIuMTQxIDEuODY5LTMuNzA5IDMuOTQ5LTUuOTY3IDcuOTk5LTEuMzkzLTEuNjQtMi4zMjItMi42ODYtNC4wMzMtNC4yNzF6Ii8+PC9zdmc+"> Save </button>
+        <button class ="archive-task-button">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMS44IDlsLS44LTRoMjJsLS44IDRoLTIuMDI5bC4zOS0yaC0xNy4xMjJsLjQxNCAyaC0yLjA1M3ptMTguNTc1LTZsLjYwNC0yaC0xNy45NzlsLjY4OCAyaDE2LjY4N3ptMy42MjUgOGwtMiAxM2gtMjBsLTItMTNoMjR6bS04IDRjMC0uNTUyLS40NDctMS0xLTFoLTZjLS41NTMgMC0xIC40NDgtMSAxcy40NDcgMSAxIDFoNmMuNTUzIDAgMS0uNDQ4IDEtMXoiLz48L3N2Zz4="> Archive </button></li>
         `;
-        
         container.appendChild(taskElement)
         makeTaskEditable();
         makeTaskArchivable();
-        // handleSavingTask();
         handleBulletCrossing('on');
 
         function makeTaskArchivable() {
           let archiveTaskButton = document.querySelectorAll('.archive-task-button')[index];
-          archiveTaskButton.addEventListener('click', (e) => {
+          archiveTaskButton.addEventListener('click', archiveTask);
+          function archiveTask() {
             currentProject.taskList.splice(index, 1);
             populateTasks();
-          });
+          }
         }
 
-        let editTaskButton
-        let saveTaskChangesButton
+
 
         function makeTaskEditable() {
-          let editTaskButton = document.querySelectorAll('.edit-task-button')[index];
-          let saveTaskChangesButton = document.querySelectorAll('.save-changes-button')[index];
+          let editTaskButton = taskElement.querySelector('.edit-task-button');
+          let saveTaskChangesButton = taskElement.querySelector('.save-changes-button');
           let editableElements = taskElement.querySelectorAll('.for-edit');
-
-          editTaskButton.addEventListener('click', (e) => {
+          let taskPriorityElement = taskElement.querySelector('.task-priority')
+          let taskDueDateElement = taskElement.querySelector('.task-dueDate')
+          let taskChecklistElement = taskElement.querySelector('.task-checklist')
+          let taskDate = taskDueDateElement.textContent;
+          let taskPriority = taskPriorityElement.classList[1];
+          
+          editTaskButton.addEventListener('click', editTask);
+          function editTask() {
+            console.log(taskPriority);
+            taskElement.classList.add('editing')
             editTaskButton.style.display = 'none';
-            saveTaskChangesButton.style.display = 'flex';
+            saveTaskChangesButton.style.display = 'inline-block';
             editableElements.forEach(element => element.contentEditable = true)
+            taskPriorityElement.innerHTML = `
+            <li><select name="priority" class="task-priority for-edit" selected="${taskPriority}">
+            <option value="minor"> low </option>
+            <option value="relevant"> normal </option>
+            <option value="important"> important </option>
+            </select></li>`
+            taskDueDateElement.innerHTML = `<li><label for="date"></label><input type="date" class="task-dueDate for-edit" value="${taskDate}"></li>`
+            taskChecklistElement.innerHTML = `<label for="checklist">checklist:</label><button class="add-bullet">+</button><button class="remove-bullet">-</button>` + taskChecklistElement.innerHTML;
+
+            let TaskPriorityOptions = Array.from(taskElement.getElementsByTagName('option'));
+
+            TaskPriorityOptions.forEach(element => {
+              if (element.value == taskPriority) {
+                element.selected = true;
+              }
+            });
+
+            const editTaskAddBulletButton = document.querySelector('.add-bullet');
+            editTaskAddBulletButton.addEventListener('click', addBullet);
+            const editTaskRemoveBulletButton = document.querySelector('.remove-bullet');
+            editTaskRemoveBulletButton.addEventListener('click', removeBullet);
+            
+            function addBullet(e) {
+              e.preventDefault();
+              const bullet = document.createElement('li')
+              bullet.innerHTML = `<label class="task-checklist-bullet" for="bullet">✦</label><span class="task-checklist-el for-edit" contentEditable="true"></span>`
+              taskChecklistElement.appendChild(bullet)
+            }
+            
+            function removeBullet(e) {
+              e.preventDefault();
+              if (checklistUl.lastChild)
+              taskChecklistElement.removeChild(taskChecklistElement.lastChild);
+            }
+
+            while (taskElement.classList.contains('editing')) {
+              document.querySelectorAll('.edit-task-button').removeEventListener('click', editTask)
+            }
+
             handleBulletCrossing('off');
-          });
+          }
+
+        handleSavingTask();
+
+          function handleSavingTask() {
+   
+              saveTaskChangesButton.addEventListener('click', (e) => {
+              saveTaskChangesButton.style.display = 'none';
+              editTaskButton.style.display = 'inline-block';
+              let editedTaskChecklist = []
+              editableElements = taskElement.querySelectorAll('.for-edit');
+              editableElements.forEach(element => {
+                
+                let editedProperty = element.classList[0].slice(5);
+                console.log(editedProperty, element)
+                if (editedProperty == 'name') {
+                  currentProject.taskList[index].name = element.textContent;
+                } else if (editedProperty == 'description') {
+                  currentProject.taskList[index].description = element.textContent;
+                } else if (editedProperty == 'priority') {
+                  currentProject.taskList[index].priority = element.value;
+                } else if (editedProperty == 'dueDate') {
+                  currentProject.taskList[index].dueDate = element.value;
+                } else if (editedProperty == 'notes') {
+                  currentProject.taskList[index].notes = element.textContent;
+                } else if (editedProperty = 'checklist-el') {
+                  if (element.textContent != '')
+                  editedTaskChecklist.push(element.textContent);
+                }
+
+              })
+              
+              currentProject.taskList[index].checklist = editedTaskChecklist;
+              console.log(editedTaskChecklist)
+              console.log(currentProject.taskList[index])
+              handleBulletCrossing('on');
+              populateTasks();
+              editableElements.forEach(element => element.contentEditable = false);
+
+            });
+          }
         }
         
-        function handleSavingTask() {
-          saveTaskChangesButton.addEventListener('click', (e) => {
-            saveTaskChangesButton.style.display = 'none';
-            editTaskButton.style.display = 'flex';
-            editableElements.forEach(element => {
-              prop = element.id.slice(4)
-              currentProject.taskList[index].prop = element.textContent || element.value
-            })
-            handleBulletCrossing('on');
-            editableElements.forEach(element => element.contentEditable = false);
-          });
-        }
 
         function handleBulletCrossing(condition) {
           const taskChecklistUl = taskElement.querySelectorAll('.checklist-li')
@@ -214,7 +283,7 @@ function populateTasks() {
   function populateProjectSelection() {
   const projectSelectionElement = document.getElementById('projects-select');
     projectList.forEach((project, index) => {
-      if (!document.getElementById(`project-opt${index}}`)) {
+      if (!document.getElementById(`project-opt${index}`)) {
         const projectSelectOption = document.createElement('option');
         projectSelectOption.id = `project-opt${index}`;
         projectSelectOption.innerText = project.name;
@@ -233,9 +302,9 @@ function populateTasks() {
         <li><input type="text" id="description-input" placeholder="description"></li>
         <li><label for="date">due to </label><input type="date" id="date-input" required></li>
         <li><label for="priority"> Priority </label><select name="priority" id="priority-select" default="normal">
-        <option value="low"> low </option>
-        <option value="medium"> normal </option>
-        <option value="high"> important </option>
+        <option value="minor"> low </option>
+        <option value="relevant"> normal </option>
+        <option value="important"> important </option>
         </select></li>
         <label for="checklist">checklist:</label><button id="add-bullet">+</button><button id="remove-bullet">-</button>
         <ul id="checklist-ul">
@@ -289,7 +358,6 @@ function populateTasks() {
 
     function taskSubmit(e) {
       e.preventDefault();
-      /////////////////////
       let taskNameInput = document.getElementById('task-name-input');
       let taskDescriptionInput = document.getElementById('description-input');
       let taskDateInput = document.getElementById('date-input');
@@ -313,6 +381,9 @@ function populateTasks() {
       selectedProject.taskList.push(newTask);
       console.log(projectList);
       populateTasks();
+      taskSubmitForm.reset();
+      addTaskButton.classList.toggle('active')
+      AddTaskModal.classList.toggle('active')
     }
 
 function removeParentContent(parentNode) {
