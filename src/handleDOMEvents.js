@@ -40,20 +40,21 @@ const handleDOMEvents = () => {
   addProjectButton.addEventListener('click', addNewProject);
 
   //////////////////////////////////////////////////////////////////
-  
-  const projectDefault = projectCreator('Default Project');
-  const theProject = projectCreator('The Project');
-  const task1 = taskCreator('Cleaning', 'do the cleaning of my room', 'relevant', '2020-11-11', ['make the bed', 'vaccum' , 'clean windows', 'clean surfaces', 'empty the trash'], 'just some cleaning nannanananan, tadada, nanananannaanna, taadadadat')
-  const task2 = taskCreator('Programming', 'learn JS React and Angular', 'important', '2020-12-01',[ 'Finish ToDos' ,'make MB website', 'finish React'])
-  const task3 = taskCreator('Christmas', 'Prepare for Christmas', 'minor', '2020-12-20', ['order presents','do the shopping', 'clean house','pack gifts', 'prepare meals'])
-  projectDefault.addTask(task1);
-  projectDefault.addTask(task2);
-  projectDefault.addTask(task3);
-  theProject.addTask(task3);
-  projectList.push(projectDefault);
-  projectList.push(theProject);
-  let currentProject = projectList[0];
-
+  if (projectList == []) {
+    const projectDefault = projectCreator('Default Project');
+    const theProject = projectCreator('The Project');
+    const task1 = taskCreator('Cleaning', 'do the cleaning of my room', 'relevant', '2020-11-11', ['make the bed', 'vaccum' , 'clean windows', 'clean surfaces', 'empty the trash'], 'just some cleaning nannanananan, tadada, nanananannaanna, taadadadat')
+    const task2 = taskCreator('Programming', 'learn JS React and Angular', 'important', '2020-12-01',[ 'Finish ToDos' ,'make MB website', 'finish React'])
+    const task3 = taskCreator('Christmas', 'Prepare for Christmas', 'minor', '2020-12-20', ['order presents','do the shopping', 'clean house','pack gifts', 'prepare meals'])
+    projectDefault.addTask(task1);
+    projectDefault.addTask(task2);
+    projectDefault.addTask(task3);
+    theProject.addTask(task3);
+    projectList.push(projectDefault);
+    projectList.push(theProject);
+  return projectList
+}
+let currentProject = projectList[0];
 //////////////////////////////////////////////////////////////////
 
 function addNewProject(e) {
@@ -91,7 +92,7 @@ function populateProjectsNav() {
       return currentProject = project;
     }
     // store locally
-    
+    localStorage.setItem('projectList', JSON.stringify(projectList));
     return currentProject  
   });
 
@@ -157,8 +158,6 @@ function populateTasks() {
           }
         }
 
-
-
         function makeTaskEditable() {
           let editTaskButton = taskElement.querySelector('.edit-task-button');
           let saveTaskChangesButton = taskElement.querySelector('.save-changes-button');
@@ -211,9 +210,9 @@ function populateTasks() {
               taskChecklistElement.removeChild(taskChecklistElement.lastChild);
             }
 
-            while (taskElement.classList.contains('editing')) {
-              document.querySelectorAll('.edit-task-button').removeEventListener('click', editTask)
-            }
+            // while (taskElement.classList.contains('editing')) {
+            //   document.querySelectorAll('.edit-task-button').removeEventListener('click', editTask)
+            // }
 
             handleBulletCrossing('off');
           }
@@ -274,10 +273,10 @@ function populateTasks() {
             }
           });
         }
-
+      localStorage.setItem('projectList', JSON.stringify(projectList));
     }
   });
-  }
+}
 
   function populateProjectSelection() {
   const projectSelectionElement = document.getElementById('projects-select');

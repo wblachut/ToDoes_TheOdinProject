@@ -1,4 +1,4 @@
-let projectList = [];
+let projectList = JSON.parse(localStorage.getItem('projectList')) || [];
 
 const projectCreator = (name, status = 'in progress', taskList = []) => {
   const getName = () => {
