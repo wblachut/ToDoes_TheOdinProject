@@ -11,7 +11,7 @@ function addBaseElements() {
   
   const logoDiv = document.createElement('div');
   logoDiv.id = 'logo-div';
-  logoDiv.innerHTML = `<img src="/Logo.png">`;
+  logoDiv.innerHTML = `<img src="img/Logo.png">`;
   navbar.appendChild(logoDiv);
 
   const topButtonsDiv = document.createElement('div');

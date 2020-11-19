@@ -147,7 +147,7 @@ function populateTasks() {
         container.appendChild(taskElement)
         makeTaskEditable();
         makeTaskArchivable();
-        handleBulletCrossing('on');
+        // handleBulletCrossing('on');
 
         function makeTaskArchivable() {
           let archiveTaskButton = document.querySelectorAll('.archive-task-button')[index];
@@ -214,7 +214,7 @@ function populateTasks() {
             //   document.querySelectorAll('.edit-task-button').removeEventListener('click', editTask)
             // }
 
-            handleBulletCrossing('off');
+            // handleBulletCrossing('off');
           }
 
         handleSavingTask();
@@ -250,29 +250,29 @@ function populateTasks() {
               currentProject.taskList[index].checklist = editedTaskChecklist;
               console.log(editedTaskChecklist)
               console.log(currentProject.taskList[index])
-              handleBulletCrossing('on');
+              // handleBulletCrossing('on');
               populateTasks();
               editableElements.forEach(element => element.contentEditable = false);
 
             });
           }
         }
-        
+         
 
-        function handleBulletCrossing(condition) {
-          const taskChecklistUl = taskElement.querySelectorAll('.checklist-li')
-          taskChecklistUl.forEach(bullet => {
-            function toggleClassCrossed() {
-               bullet.classList.toggle('crossed');
-            }
-            if (condition == 'on') {
-             bullet.addEventListener('click', toggleClassCrossed);    
-            } else if (condition == 'off') {
-              bullet.classList.remove('crossed');
-              bullet.removeEventListener('click', toggleClassCrossed) 
-            }
-          });
-        }
+        // function handleBulletCrossing(condition) {
+        //   const taskChecklistUl = taskElement.querySelectorAll('.checklist-li')
+        //   taskChecklistUl.forEach(bullet => {
+        //     function toggleClassCrossed() {
+        //        bullet.classList.toggle('crossed');
+        //     }
+        //     if (condition == 'on') {
+        //      bullet.addEventListener('click', toggleClassCrossed);    
+        //     } else if (condition == 'off') {
+        //       bullet.classList.remove('crossed');
+        //       bullet.removeEventListener('click', toggleClassCrossed) 
+        //     }
+        //   });
+        // }
       localStorage.setItem('projectList', JSON.stringify(projectList));
     }
   });
