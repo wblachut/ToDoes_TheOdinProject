@@ -11,7 +11,7 @@ function addBaseElements() {
   
   const logoDiv = document.createElement('div');
   logoDiv.id = 'logo-div';
-  logoDiv.innerHTML = `<img src="img/Logo.png">`;
+  logoDiv.innerHTML = `<img src="https://raw.githubusercontent.com/wblachut/Todos_TheOdinProject/main/src/img/Logo.png">`;
   navbar.appendChild(logoDiv);
 
   const topButtonsDiv = document.createElement('div');

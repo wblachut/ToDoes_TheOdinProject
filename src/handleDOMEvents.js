@@ -1,4 +1,4 @@
-import { taskCreator, tasksToDo } from './tasks';
+import { taskCreator } from './tasks';
 import { projectCreator, projectList } from './projects';
 
 
@@ -14,12 +14,12 @@ const handleDOMEvents = () => {
   const projectsNav = document.getElementById('projects-nav');
   const newProjectButton = document.getElementById('new-project-button');
   const newProjectUl = document.createElement('ul');
-  newProjectUl.innerHTML = `<li> <input type="text" id="project-name-input" placeholder="New project name" autofocus></li>
-  <li> <button id="add-project-button">add new Project</button> </li>`
+  newProjectUl.innerHTML = `<li> <input type="text" id="project-name-input" placeholder="New project name"></li>
+                            <li> <button id="add-project-button">add new Project</button> </li>`
   newProjectUl.id = 'new-project-ul';
   projectsNav.insertBefore(newProjectUl, projectsNav.children[0].nextElementSibling);
   menageProjectsButton.addEventListener('click', toggleProjects);
-  newProjectButton.addEventListener('click', showAddProjectOption);
+  newProjectButton.addEventListener('click', toggleAddProjectOptionDisplay);
   
   function toggleProjects() {
     projectsNav.classList.toggle('active')
@@ -31,45 +31,32 @@ const handleDOMEvents = () => {
     }
   }
   
-  function showAddProjectOption() {
+  function toggleAddProjectOptionDisplay() {
     newProjectUl.classList.toggle('active')
   }
+  
+  let currentProject = projectList[0];
   
   const projectNameInput = document.getElementById('project-name-input')
   const addProjectButton = document.getElementById('add-project-button');
   addProjectButton.addEventListener('click', addNewProject);
 
-  //////////////////////////////////////////////////////////////////
-  if (projectList == []) {
-    const projectDefault = projectCreator('Default Project');
-    const theProject = projectCreator('The Project');
-    const task1 = taskCreator('Cleaning', 'do the cleaning of my room', 'relevant', '2020-11-11', ['make the bed', 'vaccum' , 'clean windows', 'clean surfaces', 'empty the trash'], 'just some cleaning nannanananan, tadada, nanananannaanna, taadadadat')
-    const task2 = taskCreator('Programming', 'learn JS React and Angular', 'important', '2020-12-01',[ 'Finish ToDos' ,'make MB website', 'finish React'])
-    const task3 = taskCreator('Christmas', 'Prepare for Christmas', 'minor', '2020-12-20', ['order presents','do the shopping', 'clean house','pack gifts', 'prepare meals'])
-    projectDefault.addTask(task1);
-    projectDefault.addTask(task2);
-    projectDefault.addTask(task3);
-    theProject.addTask(task3);
-    projectList.push(projectDefault);
-    projectList.push(theProject);
-  return projectList
-}
-let currentProject = projectList[0];
-//////////////////////////////////////////////////////////////////
-
 function addNewProject(e) {
   e.preventDefault();
   let projectName;
   handleProjectName();
-  function handleProjectName() {
-    (projectNameInput.value == "") ? projectName = 'New Project' : projectName = projectNameInput.value;
-  }  
   const newProject = projectCreator(projectName);
   projectList.push(newProject);
+  // newProject.addToProjectList();
   console.log(projectList);
   newProjectUl.classList.remove('active')
   projectNameInput.value = ""
   populateProjectsNav();
+  
+    function handleProjectName() {
+      (projectNameInput.value == "") ? projectName = 'New Project' : projectName = projectNameInput.value;
+      return projectName  
+    }
 }
 
 function populateProjectsNav() {
@@ -362,26 +349,29 @@ function populateTasks() {
       let taskPriorityInput = document.getElementById('priority-select');
       let taskProjectsSelect = document.getElementById('projects-select');
       let taskNotesInput = document.getElementById('notes-textarea');
+      let taskChecklistInputs = document.querySelectorAll('.checklist-input');
 
-      let taskChecklistInput = document.querySelectorAll('.checklist-input');
-
-      let checkListInputs = [];
-      taskChecklistInput.forEach(input => {
+      let checkListArray = [];
+      taskChecklistInputs.forEach(input => {
         if (input.value != '')
-        checkListInputs.push(input.value);
+        checkListArray.push(input.value);
       });
 
       let selectedProjectId = taskProjectsSelect.options[taskProjectsSelect.selectedIndex].id.slice(-1);
       let selectedProject = projectList[selectedProjectId];
 
       console.log('selected project:', selectedProjectId, taskProjectsSelect.value); 
-      const newTask = taskCreator(taskNameInput.value, taskDescriptionInput.value, taskPriorityInput.value, taskDateInput.value, checkListInputs, taskNotesInput.value);
-      selectedProject.taskList.push(newTask);
+      const newTask = taskCreator(taskNameInput.value, taskDescriptionInput.value, taskPriorityInput.value, taskDateInput.value, checkListArray, taskNotesInput.value);
+      selectedProject.addTask(newTask);
       console.log(projectList);
       populateTasks();
-      taskSubmitForm.reset();
-      addTaskButton.classList.toggle('active')
-      AddTaskModal.classList.toggle('active')
+      hideAddTaskForm();
+
+      function hideAddTaskForm() {
+        taskSubmitForm.reset();
+        addTaskButton.classList.toggle('active')
+        AddTaskModal.classList.toggle('active')
+      }
     }
 
 function removeParentContent(parentNode) {

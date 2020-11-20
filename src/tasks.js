@@ -1,4 +1,5 @@
 const taskCreator = (name, description, priority, dueDate, checklist, notes = '') => {
+  
   const setName = (newName) => {
     return this.name = newName;
   }
@@ -6,5 +7,4 @@ const taskCreator = (name, description, priority, dueDate, checklist, notes = ''
   return { name, description, priority, dueDate, checklist, notes, setName }
 }
 
-////////////////
 export { taskCreator };
