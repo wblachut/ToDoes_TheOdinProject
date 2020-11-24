@@ -23,5 +23,7 @@ module.exports = {
     port: 8080,
     contentBase: path.resolve(__dirname, 'dist'),
     hot: true
-  }
+  },
+  
+  mode: "development"
 }

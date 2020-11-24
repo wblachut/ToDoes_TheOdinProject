@@ -1,125 +1,134 @@
+/* eslint-disable no-use-before-define */
 import { taskCreator } from './tasks';
 import { projectCreator, projectList } from './projects';
 
-
 const handleDOMEvents = () => {
-
-  console.log('handleDOMEvents')
+  console.log('handleDOMEvents');
   const mainDiv = document.getElementById('main');
   const container = document.createElement('div');
-  container.id = 'container';
-  mainDiv.appendChild(container)
-  
-  const menageProjectsButton = document.getElementById('menage-projects-button')
+  const menageProjectsButton = document.getElementById('menage-projects-button');
   const projectsNav = document.getElementById('projects-nav');
   const newProjectButton = document.getElementById('new-project-button');
   const newProjectUl = document.createElement('ul');
+  container.id = 'container';
+  mainDiv.appendChild(container);
+
   newProjectUl.innerHTML = `<li> <input type="text" id="project-name-input" placeholder="New project name"></li>
-                            <li> <button id="add-project-button">add new Project</button> </li>`
+                            <li> <button id="add-project-button">add new Project</button> </li>`;
   newProjectUl.id = 'new-project-ul';
-  projectsNav.insertBefore(newProjectUl, projectsNav.children[0].nextElementSibling);
+  projectsNav.insertBefore(
+    newProjectUl,
+    projectsNav.children[0].nextElementSibling
+  );
   menageProjectsButton.addEventListener('click', toggleProjects);
   newProjectButton.addEventListener('click', toggleAddProjectOptionDisplay);
-  
+
   function toggleProjects() {
-    projectsNav.classList.toggle('active')
-    menageProjectsButton.classList.toggle('active')
+    projectsNav.classList.toggle('active');
+    menageProjectsButton.classList.toggle('active');
     if (menageProjectsButton.classList.contains('active')) {
-      menageProjectsButton.textContent = ' Projects '
+      menageProjectsButton.textContent = ' Projects ';
     } else {
-      menageProjectsButton.textContent = '˂'
+      menageProjectsButton.textContent = '˂';
     }
   }
-  
+
   function toggleAddProjectOptionDisplay() {
-    newProjectUl.classList.toggle('active')
+    newProjectUl.classList.toggle('active');
   }
-  
-  let currentProject = projectList[0];
-  
-  const projectNameInput = document.getElementById('project-name-input')
+
+  let currentProject;
+  function setCurrentProject(project) {
+    return (currentProject = project);
+  }
+
+  setCurrentProject(projectList[0]);
+  const projectNameInput = document.getElementById('project-name-input');
   const addProjectButton = document.getElementById('add-project-button');
   addProjectButton.addEventListener('click', addNewProject);
 
-function addNewProject(e) {
-  e.preventDefault();
-  let projectName;
-  handleProjectName();
-  const newProject = projectCreator(projectName);
-  projectList.push(newProject);
-  // newProject.addToProjectList();
-  console.log(projectList);
-  newProjectUl.classList.remove('active')
-  projectNameInput.value = ""
-  populateProjectsNav();
-  
+  function addNewProject(e) {
+    e.preventDefault();
+    let projectName;
+    handleProjectName();
+    const newProject = projectCreator(projectName);
+    projectList.push(newProject);
+    // newProject.addToProjectList();
+    console.log(projectList);
+    newProjectUl.classList.remove('active');
+    projectNameInput.value = '';
+    populateProjectsNav();
+
     function handleProjectName() {
-      (projectNameInput.value == "") ? projectName = 'New Project' : projectName = projectNameInput.value;
-      return projectName  
+      ( projectNameInput.value === '' ) ? (projectName = 'New Project') : (projectName = projectNameInput.value);
+      return projectName;
     }
-}
-
-function populateProjectsNav() {
-  projectList.forEach((project, index) => {
-    console.log(index, project.name);
-    const projectElement = document.createElement('button');
-    if (!document.getElementById(`Project${index}`)) {
-      projectElement.id = `Project${index}`;
-      projectElement.classList.add('project');
-      projectElement.innerText = project.name;
-      projectsNav.appendChild(projectElement)
-      if (index == 0){
-        projectElement.classList.add('active-project')
-      }
-    }
-
-    projectElement.addEventListener('click', makeCurrentProject);
-    function makeCurrentProject() {
-      console.log('current project:', index, project);
-      return currentProject = project;
-    }
-    // store locally
-    localStorage.setItem('projectList', JSON.stringify(projectList));
-    return currentProject  
-  });
-
-  populateProjectSelection();
-  handleProjectSwitch();
-
-  function handleProjectSwitch() {
-    const projectNodeList = document.querySelectorAll('.project')
-    projectNodeList.forEach((project, index) => {
-      project.addEventListener('click', (e) => {
-      projectNodeList.forEach(project => project.classList.remove('active-project'));
-      populateTasks();
-      project.classList.add('active-project')})
-    });
   }
-}
 
-function populateTasks() {
-  removeParentContent(container);
-  currentProject.taskList.forEach((task, index) => {
-    const taskElement = document.createElement('div');
-    if (!document.getElementById(`Task${index}`)) {
-      taskElement.id = `Task${index}`;
-      taskElement.classList.add('Task');
-      let taskChecklistContent = '';
-      let taskNoteContent = '';
-      task.checklist.forEach((element, index) => {
-      //  console.log(index, element);
-          taskChecklistContent += `<li><label class="task-checklist-bullet" for="bullet${index}">✦</label><span class="task-checklist-el for-edit">${element}</span></li>`
-          return taskChecklistContent
+  function populateProjectsNav() {
+    projectList.forEach((project, index) => {
+      console.log(index, project.name);
+      const projectElement = document.createElement('button');
+      if (!document.getElementById(`Project${index}`)) {
+        projectElement.id = `Project${index}`;
+        projectElement.classList.add('project');
+        projectElement.innerText = project.name;
+        projectsNav.appendChild(projectElement);
+        if (index === 0) {
+          projectElement.classList.add('active-project');
+        }
+      }
+
+      projectElement.addEventListener('click', makeCurrentProject);
+      function makeCurrentProject() {
+        console.log('current project:', index, project);
+        return (currentProject = project);
+      }
+
+      // store locally
+      localStorage.setItem('projectList', JSON.stringify(projectList));
+      return currentProject;
+    });
+
+    populateProjectSelection();
+    handleProjectSwitch();
+
+    function handleProjectSwitch() {
+      const projectNodeList = document.querySelectorAll('.project');
+      projectNodeList.forEach((project) => {
+        project.addEventListener('click', () => {
+          projectNodeList.forEach((project) =>
+            project.classList.remove('active-project')
+          );
+          populateTasks();
+          project.classList.add('active-project');
+        });
       });
+    }
+  }
 
-      if (task.notes != '') {
-        taskNoteContent =  `<br>
+  function populateTasks() {
+    removeParentContent(container);
+    currentProject.taskList.forEach((task, index) => {
+      const taskElement = document.createElement('div');
+      if (!document.getElementById(`Task${index}`)) {
+        taskElement.id = `Task${index}`;
+        taskElement.classList.add('Task');
+        let taskChecklistContent = '';
+        let taskNoteContent = '';
+        task.checklist.forEach((element, index) => {
+          //  console.log(index, element);
+          taskChecklistContent += `<li><label class="task-checklist-bullet" for="bullet${index}">✦</label><span class="task-checklist-el for-edit">${element}</span></li>`;
+          return taskChecklistContent;
+        });
+
+        if (task.notes !== '') {
+          taskNoteContent = `<br>
         <li><div class ="notes"> Notes: </div></li>
         <li><div class ="task-notes for-edit" >${task.notes}</div></li>`;
-      }
+        }
 
-      taskElement.innerHTML =
-       `<div class="editing-label">editing</div><ul><li><div class="task-name for-edit">${task.name}</div>
+        taskElement.innerHTML = `<div class="editing-label">editing</div><ul><li><div class="task-name for-edit">${task.name}</div>
         <div class ="task-priority ${task.priority} for-edit">${task.priority} </div></li>
         <li><div class ="task-description for-edit">${task.description}</div></li>
         <li>due to: <div class ="task-dueDate for-edit">${task.dueDate}</div></li>
@@ -131,13 +140,15 @@ function populateTasks() {
         <button class ="archive-task-button">
             <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMS44IDlsLS44LTRoMjJsLS44IDRoLTIuMDI5bC4zOS0yaC0xNy4xMjJsLjQxNCAyaC0yLjA1M3ptMTguNTc1LTZsLjYwNC0yaC0xNy45NzlsLjY4OCAyaDE2LjY4N3ptMy42MjUgOGwtMiAxM2gtMjBsLTItMTNoMjR6bS04IDRjMC0uNTUyLS40NDctMS0xLTFoLTZjLS41NTMgMC0xIC40NDgtMSAxcy40NDcgMSAxIDFoNmMuNTUzIDAgMS0uNDQ4IDEtMXoiLz48L3N2Zz4="> Archive </button></li>
         `;
-        container.appendChild(taskElement)
+        container.appendChild(taskElement);
         makeTaskEditable();
         makeTaskArchivable();
         // handleBulletCrossing('on');
 
         function makeTaskArchivable() {
-          let archiveTaskButton = document.querySelectorAll('.archive-task-button')[index];
+          const archiveTaskButton = document.querySelectorAll(
+            '.archive-task-button'
+          )[index];
           archiveTaskButton.addEventListener('click', archiveTask);
           function archiveTask() {
             currentProject.taskList.splice(index, 1);
@@ -146,105 +157,118 @@ function populateTasks() {
         }
 
         function makeTaskEditable() {
-          let editTaskButton = taskElement.querySelector('.edit-task-button');
-          let saveTaskChangesButton = taskElement.querySelector('.save-changes-button');
+          const editTaskButton = taskElement.querySelector('.edit-task-button');
+          const saveTaskChangesButton = taskElement.querySelector(
+            '.save-changes-button'
+          );
           let editableElements = taskElement.querySelectorAll('.for-edit');
-          let taskPriorityElement = taskElement.querySelector('.task-priority')
-          let taskDueDateElement = taskElement.querySelector('.task-dueDate')
-          let taskChecklistElement = taskElement.querySelector('.task-checklist')
-          let taskDate = taskDueDateElement.textContent;
-          let taskPriority = taskPriorityElement.classList[1];
-          
+          const taskPriorityElement = taskElement.querySelector(
+            '.task-priority'
+          );
+          const taskDueDateElement = taskElement.querySelector('.task-dueDate');
+          const taskChecklistElement = taskElement.querySelector(
+            '.task-checklist'
+          );
+          const taskDate = taskDueDateElement.textContent;
+          const taskPriority = taskPriorityElement.classList[1];
+
           editTaskButton.addEventListener('click', editTask);
           function editTask() {
             console.log(taskPriority);
-            taskElement.classList.add('editing')
+            taskElement.classList.add('editing');
             editTaskButton.style.display = 'none';
             saveTaskChangesButton.style.display = 'inline-block';
-            editableElements.forEach(element => element.contentEditable = true)
+            editableElements.forEach(
+              (element) => (element.contentEditable = true)
+            );
             taskPriorityElement.innerHTML = `
             <li><select name="priority" class="task-priority for-edit" selected="${taskPriority}">
             <option value="minor"> low </option>
             <option value="relevant"> normal </option>
             <option value="important"> important </option>
-            </select></li>`
-            taskDueDateElement.innerHTML = `<li><label for="date"></label><input type="date" class="task-dueDate for-edit" value="${taskDate}"></li>`
-            taskChecklistElement.innerHTML = `<label for="checklist">checklist:</label><button class="add-bullet">+</button><button class="remove-bullet">-</button>` + taskChecklistElement.innerHTML;
+            </select></li>`;
+            taskDueDateElement.innerHTML = `<li><label for="date"></label><input type="date" class="task-dueDate for-edit" value="${taskDate}"></li>`;
+            taskChecklistElement.innerHTML = `<label for="checklist">checklist:</label><button class="add-bullet">+</button><button class="remove-bullet">-</button>${taskChecklistElement.innerHTML}`;
 
-            let TaskPriorityOptions = Array.from(taskElement.getElementsByTagName('option'));
+            const TaskPriorityOptions = Array.from(
+              taskElement.getElementsByTagName('option')
+            );
 
-            TaskPriorityOptions.forEach(element => {
-              if (element.value == taskPriority) {
+            TaskPriorityOptions.forEach((element) => {
+              if (element.value === taskPriority) {
                 element.selected = true;
               }
             });
 
-            const editTaskAddBulletButton = document.querySelector('.add-bullet');
-            editTaskAddBulletButton.addEventListener('click', addBullet);
-            const editTaskRemoveBulletButton = document.querySelector('.remove-bullet');
-            editTaskRemoveBulletButton.addEventListener('click', removeBullet);
-            
-            function addBullet(e) {
+            const editTaskAddBulletButton = document.querySelector(
+              '.add-bullet'
+            );
+            editTaskAddBulletButton.addEventListener('click', addEditableBullet);
+            const editTaskRemoveBulletButton = document.querySelector(
+              '.remove-bullet'
+            );
+            editTaskRemoveBulletButton.addEventListener('click', removeEditableBullet);
+
+            function addEditableBullet(e) {
               e.preventDefault();
-              const bullet = document.createElement('li')
-              bullet.innerHTML = `<label class="task-checklist-bullet" for="bullet">✦</label><span class="task-checklist-el for-edit" contentEditable="true"></span>`
-              taskChecklistElement.appendChild(bullet)
+              const bullet = document.createElement('li');
+              bullet.innerHTML = `<label class="task-checklist-bullet" for="bullet">✦</label><span class="task-checklist-el for-edit" contentEditable="true"></span>`;
+              taskChecklistElement.appendChild(bullet);
             }
-            
-            function removeBullet(e) {
+
+            function removeEditableBullet(e) {
               e.preventDefault();
               if (checklistUl.lastChild)
-              taskChecklistElement.removeChild(taskChecklistElement.lastChild);
+                taskChecklistElement.removeChild(
+                  taskChecklistElement.lastChild
+                );
             }
 
-            // while (taskElement.classList.contains('editing')) {
+            // if (taskElement.classList.contains('editing')) {
             //   document.querySelectorAll('.edit-task-button').removeEventListener('click', editTask)
             // }
-
             // handleBulletCrossing('off');
           }
 
-        handleSavingTask();
+          handleSavingTask();
 
           function handleSavingTask() {
-   
-              saveTaskChangesButton.addEventListener('click', (e) => {
+            saveTaskChangesButton.addEventListener('click', () => {
               saveTaskChangesButton.style.display = 'none';
               editTaskButton.style.display = 'inline-block';
-              let editedTaskChecklist = []
+              const editedTaskChecklist = [];
               editableElements = taskElement.querySelectorAll('.for-edit');
-              editableElements.forEach(element => {
-                
-                let editedProperty = element.classList[0].slice(5);
-                console.log(editedProperty, element)
-                if (editedProperty == 'name') {
+              editableElements.forEach((element) => {
+                const editedProperty = element.classList[0].slice(5);
+                console.log(editedProperty, element);
+                if (editedProperty === 'name') {
                   currentProject.taskList[index].name = element.textContent;
-                } else if (editedProperty == 'description') {
-                  currentProject.taskList[index].description = element.textContent;
-                } else if (editedProperty == 'priority') {
+                } else if (editedProperty === 'description') {
+                  currentProject.taskList[index].description =
+                    element.textContent;
+                } else if (editedProperty === 'priority') {
                   currentProject.taskList[index].priority = element.value;
-                } else if (editedProperty == 'dueDate') {
+                } else if (editedProperty === 'dueDate') {
                   currentProject.taskList[index].dueDate = element.value;
-                } else if (editedProperty == 'notes') {
+                } else if (editedProperty === 'notes') {
                   currentProject.taskList[index].notes = element.textContent;
-                } else if (editedProperty = 'checklist-el') {
-                  if (element.textContent != '')
-                  editedTaskChecklist.push(element.textContent);
+                } else if (editedProperty === 'checklist-el') {
+                  if (element.textContent !== '')
+                    editedTaskChecklist.push(element.textContent);
                 }
+              });
 
-              })
-              
               currentProject.taskList[index].checklist = editedTaskChecklist;
-              console.log(editedTaskChecklist)
-              console.log(currentProject.taskList[index])
+              console.log(editedTaskChecklist);
+              console.log(currentProject.taskList[index]);
               // handleBulletCrossing('on');
               populateTasks();
-              editableElements.forEach(element => element.contentEditable = false);
-
+              editableElements.forEach(
+                (element) => (element.contentEditable = false)
+              );
             });
           }
         }
-         
 
         // function handleBulletCrossing(condition) {
         //   const taskChecklistUl = taskElement.querySelectorAll('.checklist-li')
@@ -253,30 +277,30 @@ function populateTasks() {
         //        bullet.classList.toggle('crossed');
         //     }
         //     if (condition == 'on') {
-        //      bullet.addEventListener('click', toggleClassCrossed);    
+        //      bullet.addEventListener('click', toggleClassCrossed);
         //     } else if (condition == 'off') {
         //       bullet.classList.remove('crossed');
-        //       bullet.removeEventListener('click', toggleClassCrossed) 
+        //       bullet.removeEventListener('click', toggleClassCrossed)
         //     }
         //   });
         // }
-      localStorage.setItem('projectList', JSON.stringify(projectList));
-    }
-  });
-}
+        localStorage.setItem('projectList', JSON.stringify(projectList));
+      }
+    });
+  }
 
   function populateProjectSelection() {
-  const projectSelectionElement = document.getElementById('projects-select');
+    const projectSelectionElement = document.getElementById('projects-select');
     projectList.forEach((project, index) => {
       if (!document.getElementById(`project-opt${index}`)) {
         const projectSelectOption = document.createElement('option');
         projectSelectOption.id = `project-opt${index}`;
         projectSelectOption.innerText = project.name;
-        projectSelectionElement.appendChild(projectSelectOption)
+        projectSelectionElement.appendChild(projectSelectOption);
       }
     });
   }
-  
+
   const AddTaskModal = document.createElement('div');
   AddTaskModal.id = 'add-task-modal';
   AddTaskModal.innerHTML = `
@@ -307,75 +331,84 @@ function populateTasks() {
     </form>`;
   container.appendChild(AddTaskModal);
 
-  const addTaskButton = document.getElementById('add-task-button')
+  const addTaskButton = document.getElementById('add-task-button');
   addTaskButton.addEventListener('click', toggleAddTask);
-  
-  
+
   function toggleAddTask(e) {
     e.preventDefault();
-    addTaskButton.classList.toggle('active')
-    AddTaskModal.classList.toggle('active')
+    addTaskButton.classList.toggle('active');
+    AddTaskModal.classList.toggle('active');
+  }
+
+  const checklistUl = document.getElementById('checklist-ul');
+  const addBulletButton = document.getElementById('add-bullet');
+  addBulletButton.addEventListener('click', addBullet);
+  const removeBulletButton = document.getElementById('remove-bullet');
+  removeBulletButton.addEventListener('click', removeBullet);
+
+  function addBullet(e) {
+    e.preventDefault();
+    const bullet = document.createElement('li');
+    bullet.innerHTML = ` <li><label class="checklist-bullet" for="bullet">✦</label><input type="text" class="checklist-input" placeholder="add your text"></li> `;
+    checklistUl.appendChild(bullet);
+  }
+
+  function removeBullet(e) {
+    e.preventDefault();
+    if (checklistUl.lastChild) checklistUl.removeChild(checklistUl.lastChild);
+  }
+
+  const taskSubmitForm = document.getElementById('new-task');
+  taskSubmitForm.addEventListener('submit', taskSubmit);
+
+  function taskSubmit(e) {
+    e.preventDefault();
+    const taskNameInput = document.getElementById('task-name-input');
+    const taskDescriptionInput = document.getElementById('description-input');
+    const taskDateInput = document.getElementById('date-input');
+    const taskPriorityInput = document.getElementById('priority-select');
+    const taskProjectsSelect = document.getElementById('projects-select');
+    const taskNotesInput = document.getElementById('notes-textarea');
+    const taskChecklistInputs = document.querySelectorAll('.checklist-input');
+
+    const checkListArray = [];
+    taskChecklistInputs.forEach((input) => {
+      if (input.value !== '') checkListArray.push(input.value);
+    });
+
+    const selectedProjectId = taskProjectsSelect.options[
+      taskProjectsSelect.selectedIndex
+    ].id.slice(-1);
+    const selectedProject = projectList[selectedProjectId];
+
+    console.log(
+      'selected project:',
+      selectedProjectId,
+      taskProjectsSelect.value
+    );
+    const newTask = taskCreator(
+      taskNameInput.value,
+      taskDescriptionInput.value,
+      taskPriorityInput.value,
+      taskDateInput.value,
+      checkListArray,
+      taskNotesInput.value
+    );
+    // selectedProject.addTask(newTask);
+    selectedProject.taskList.push(newTask);
+    console.log(projectList);
+    populateTasks();
+    hideAddTaskForm();
+
+    function hideAddTaskForm() {
+      taskSubmitForm.reset();
+      addTaskButton.classList.toggle('active');
+      AddTaskModal.classList.toggle('active');
     }
+  }
 
-    const checklistUl = document.getElementById('checklist-ul')
-    const addBulletButton = document.getElementById('add-bullet');
-    addBulletButton.addEventListener('click', addBullet);
-    const removeBulletButton = document.getElementById('remove-bullet');
-    removeBulletButton.addEventListener('click', removeBullet);
-    
-    function addBullet(e) {
-      e.preventDefault();
-      const bullet = document.createElement('li')
-      bullet.innerHTML = ` <li><label class="checklist-bullet" for="bullet">✦</label><input type="text" class="checklist-input" placeholder="add your text"></li> `
-      checklistUl.appendChild(bullet)
-    }
-    
-    function removeBullet(e) {
-      e.preventDefault();
-      if (checklistUl.lastChild)
-      checklistUl.removeChild(checklistUl.lastChild);
-    }
-    
-    
-    
-    const taskSubmitForm = document.getElementById('new-task');
-    taskSubmitForm.addEventListener('submit', taskSubmit);
-
-    function taskSubmit(e) {
-      e.preventDefault();
-      let taskNameInput = document.getElementById('task-name-input');
-      let taskDescriptionInput = document.getElementById('description-input');
-      let taskDateInput = document.getElementById('date-input');
-      let taskPriorityInput = document.getElementById('priority-select');
-      let taskProjectsSelect = document.getElementById('projects-select');
-      let taskNotesInput = document.getElementById('notes-textarea');
-      let taskChecklistInputs = document.querySelectorAll('.checklist-input');
-
-      let checkListArray = [];
-      taskChecklistInputs.forEach(input => {
-        if (input.value != '')
-        checkListArray.push(input.value);
-      });
-
-      let selectedProjectId = taskProjectsSelect.options[taskProjectsSelect.selectedIndex].id.slice(-1);
-      let selectedProject = projectList[selectedProjectId];
-
-      console.log('selected project:', selectedProjectId, taskProjectsSelect.value); 
-      const newTask = taskCreator(taskNameInput.value, taskDescriptionInput.value, taskPriorityInput.value, taskDateInput.value, checkListArray, taskNotesInput.value);
-      selectedProject.addTask(newTask);
-      console.log(projectList);
-      populateTasks();
-      hideAddTaskForm();
-
-      function hideAddTaskForm() {
-        taskSubmitForm.reset();
-        addTaskButton.classList.toggle('active')
-        AddTaskModal.classList.toggle('active')
-      }
-    }
-
-function removeParentContent(parentNode) {
-    while (parentNode.firstChild)  {
+  function removeParentContent(parentNode) {
+    while (parentNode.firstChild) {
       parentNode.removeChild(parentNode.lastChild);
     }
   }
@@ -384,8 +417,6 @@ function removeParentContent(parentNode) {
   populateTasks();
   ///
   mainDiv.appendChild(AddTaskModal);
+};
 
-
-}
-
-export { handleDOMEvents }
+export { handleDOMEvents };
