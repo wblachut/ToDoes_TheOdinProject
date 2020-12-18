@@ -6,7 +6,9 @@ const handleDOMEvents = () => {
   console.log('handleDOMEvents');
   const mainDiv = document.getElementById('main');
   const container = document.createElement('div');
-  const menageProjectsButton = document.getElementById('menage-projects-button');
+  const menageProjectsButton = document.getElementById(
+    'menage-projects-button'
+  );
   const projectsNav = document.getElementById('projects-nav');
   const newProjectButton = document.getElementById('new-project-button');
   const newProjectUl = document.createElement('ul');
@@ -26,10 +28,13 @@ const handleDOMEvents = () => {
   function toggleProjects() {
     projectsNav.classList.toggle('active');
     menageProjectsButton.classList.toggle('active');
+
     if (menageProjectsButton.classList.contains('active')) {
-      menageProjectsButton.textContent = ' Projects ';
+      document.getElementById('project-span').classList.add('active');
+      document.getElementById('arrows-svg').classList.add('active');
     } else {
-      menageProjectsButton.textContent = '˂';
+      document.getElementById('project-span').classList.remove('active');
+      document.getElementById('arrows-svg').classList.remove('active');
     }
   }
 
@@ -49,19 +54,23 @@ const handleDOMEvents = () => {
 
   function addNewProject(e) {
     e.preventDefault();
-    let projectName;
-    handleProjectName();
-    const newProject = projectCreator(projectName);
+    const newProject = projectCreator(handleProjectName());
     projectList.push(newProject);
-    // newProject.addToProjectList();
     console.log(projectList);
-    newProjectUl.classList.remove('active');
-    projectNameInput.value = '';
+    clearProjectInput();
     populateProjectsNav();
 
     function handleProjectName() {
-      ( projectNameInput.value === '' ) ? (projectName = 'New Project') : (projectName = projectNameInput.value);
+      let projectName;
+      projectNameInput.value === ''
+        ? (projectName = 'New Project')
+        : (projectName = projectNameInput.value);
       return projectName;
+    }
+
+    function clearProjectInput() {
+      newProjectUl.classList.remove('active');
+      projectNameInput.value = '';
     }
   }
 
@@ -92,7 +101,6 @@ const handleDOMEvents = () => {
 
     populateProjectSelection();
     handleProjectSwitch();
-
     function handleProjectSwitch() {
       const projectNodeList = document.querySelectorAll('.project');
       projectNodeList.forEach((project) => {
@@ -100,8 +108,8 @@ const handleDOMEvents = () => {
           projectNodeList.forEach((project) =>
             project.classList.remove('active-project')
           );
-          populateTasks();
           project.classList.add('active-project');
+          populateTasks();
         });
       });
     }
@@ -114,21 +122,23 @@ const handleDOMEvents = () => {
       if (!document.getElementById(`Task${index}`)) {
         taskElement.id = `Task${index}`;
         taskElement.classList.add('Task');
-        let taskChecklistContent = '';
-        let taskNoteContent = '';
-        task.checklist.forEach((element, index) => {
-          //  console.log(index, element);
-          taskChecklistContent += `<li><label class="task-checklist-bullet" for="bullet${index}">✦</label><span class="task-checklist-el for-edit">${element}</span></li>`;
-          return taskChecklistContent;
-        });
 
-        if (task.notes !== '') {
-          taskNoteContent = `<br>
+        function renderTaskContent() {
+          let taskChecklistContent = '';
+          let taskNoteContent = '';
+          task.checklist.forEach((element, index) => {
+            //  console.log(index, element);
+            taskChecklistContent += `<li><label class="task-checklist-bullet" for="bullet${index}">✦</label><span class="task-checklist-el for-edit">${element}</span></li>`;
+            return taskChecklistContent;
+          });
+
+          if (task.notes !== '') {
+            taskNoteContent = `<br>
         <li><div class ="notes"> Notes: </div></li>
         <li><div class ="task-notes for-edit" >${task.notes}</div></li>`;
-        }
+          }
 
-        taskElement.innerHTML = `<div class="editing-label">editing</div><ul><li><div class="task-name for-edit">${task.name}</div>
+          taskElement.innerHTML = `<div class="editing-label">editing</div><ul><li><div class="task-name for-edit">${task.name}</div>
         <div class ="task-priority ${task.priority} for-edit">${task.priority} </div></li>
         <li><div class ="task-description for-edit">${task.description}</div></li>
         <li>due to: <div class ="task-dueDate for-edit">${task.dueDate}</div></li>
@@ -140,7 +150,10 @@ const handleDOMEvents = () => {
         <button class ="archive-task-button">
             <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMS44IDlsLS44LTRoMjJsLS44IDRoLTIuMDI5bC4zOS0yaC0xNy4xMjJsLjQxNCAyaC0yLjA1M3ptMTguNTc1LTZsLjYwNC0yaC0xNy45NzlsLjY4OCAyaDE2LjY4N3ptMy42MjUgOGwtMiAxM2gtMjBsLTItMTNoMjR6bS04IDRjMC0uNTUyLS40NDctMS0xLTFoLTZjLS41NTMgMC0xIC40NDgtMSAxcy40NDcgMSAxIDFoNmMuNTUzIDAgMS0uNDQ4IDEtMXoiLz48L3N2Zz4="> Archive </button></li>
         `;
-        container.appendChild(taskElement);
+          container.appendChild(taskElement);
+        }
+
+        renderTaskContent();
         makeTaskEditable();
         makeTaskArchivable();
         // handleBulletCrossing('on');
@@ -203,11 +216,17 @@ const handleDOMEvents = () => {
             const editTaskAddBulletButton = document.querySelector(
               '.add-bullet'
             );
-            editTaskAddBulletButton.addEventListener('click', addEditableBullet);
+            editTaskAddBulletButton.addEventListener(
+              'click',
+              addEditableBullet
+            );
             const editTaskRemoveBulletButton = document.querySelector(
               '.remove-bullet'
             );
-            editTaskRemoveBulletButton.addEventListener('click', removeEditableBullet);
+            editTaskRemoveBulletButton.addEventListener(
+              'click',
+              removeEditableBullet
+            );
 
             function addEditableBullet(e) {
               e.preventDefault();
