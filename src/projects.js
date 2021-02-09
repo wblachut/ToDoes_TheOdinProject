@@ -78,6 +78,8 @@ const getDefPList = function getDefaultProjectList(projectList = []) {
   return projectList;
 };
 
+// Filippo
+// Here I declare projectList which I expect to be either parsed from local storage (if exist) or created from getDefPList
 const projectList =
   JSON.parse(localStorage.getItem('projectList')) || getDefPList();
 
