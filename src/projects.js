@@ -48,11 +48,11 @@ const getDefPList = function getDefaultProjectList(projectList = []) {
       'clean surfaces',
       'empty the trash',
     ],
-    'just some cleaning nannanananan, tadada, nanananannaanna, taadadadat'
+    'just some cleaning...'
   );
   const task2 = taskCreator(
     'Programming',
-    'learn JS React and Angular',
+    'learn JS React',
     'important',
     '2020-12-01',
     ['Finish ToDos', 'make MB website', 'finish React']

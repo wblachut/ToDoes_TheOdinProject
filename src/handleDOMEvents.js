@@ -1,3 +1,5 @@
+/* eslint-disable no-inner-declarations */
+/* eslint-disable no-shadow */
 /* eslint-disable no-use-before-define */
 import { taskCreator } from './tasks';
 import { projectCreator, projectList } from './projects';
@@ -413,7 +415,6 @@ const handleDOMEvents = () => {
       checkListArray,
       taskNotesInput.value
     );
-    // selectedProject.addTask(newTask);
     selectedProject.taskList.push(newTask);
     console.log(projectList);
     populateTasks();
@@ -434,7 +435,6 @@ const handleDOMEvents = () => {
 
   populateProjectsNav();
   populateTasks();
-  ///
   mainDiv.appendChild(AddTaskModal);
 };
 
